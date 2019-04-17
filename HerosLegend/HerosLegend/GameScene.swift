@@ -23,8 +23,14 @@ class GameScene: SKScene {
         self.lastUpdateTime = 0
         
         let wall = SKSpriteNode(imageNamed: "Wall-Tile.png")
-        for i in stride(from: 0, to: 752, by: 16){
-            
+        let size = CGSize(width: 16, height: 16)
+        wall.physicsBody = SKPhysicsBody(rectangleOf: size)
+        wall.physicsBody!.isDynamic = false
+        for i in stride(from: 0, to: 753, by: 17){
+            for k in stride(from: 0, to: 1025, by: 1009) {
+                wall.position = CGPoint(x: k, y: i)
+            }
+            addChild(wall)
         }
         // Create shape node to use during mouse interaction
         let w = (self.size.width + self.size.height) * 0.05
