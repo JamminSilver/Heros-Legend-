@@ -22,15 +22,15 @@ class GameScene: SKScene {
 
         self.lastUpdateTime = 0
         
-        let wall = SKSpriteNode(imageNamed: "Wall-Tile.png")
-        let size = CGSize(width: 16, height: 16)
-        wall.physicsBody = SKPhysicsBody(rectangleOf: size)
-        wall.physicsBody!.isDynamic = false
-        for i in stride(from: 0, to: 753, by: 17){
-            for k in stride(from: 0, to: 1025, by: 1009) {
-                wall.position = CGPoint(x: k, y: i)
+        for i in stride(from: 0, to: 761, by: 64){
+            for k in stride(from: 32, to: 1024, by: 960) {
+                createWall(i: i, k: k)
             }
-            addChild(wall)
+        }
+        for i in stride(from: 0, to: 761, by: 704){
+            for k in stride(from: 96, to: 1024, by: 64) {
+                createWall(i: i, k: k)
+            }
         }
         // Create shape node to use during mouse interaction
         let w = (self.size.width + self.size.height) * 0.05
@@ -45,6 +45,15 @@ class GameScene: SKScene {
                                               SKAction.removeFromParent()]))
         }
     }
+    func createWall(i: Int, k: Int) {
+        let wall = SKSpriteNode(imageNamed: "Wall-Tile.png")
+        let size = CGSize(width: 64, height: 64)
+        wall.physicsBody = SKPhysicsBody(rectangleOf: size)
+        wall.physicsBody!.isDynamic = false
+        wall.position = CGPoint(x: k, y: i)
+        addChild(wall)
+    }
+    
     
     
     func touchDown(atPoint pos : CGPoint) {
