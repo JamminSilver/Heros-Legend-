@@ -23,15 +23,12 @@ class GameScene: SKScene {
         self.lastUpdateTime = 0
         
         for i in stride(from: 0, to: 761, by: 64){
-            for k in stride(from: 32, to: 1024, by: 960) {
+            for k in stride(from: 32, to: 1024, by: 64) {
                 createWall(i: i, k: k)
             }
         }
-        for i in stride(from: 0, to: 761, by: 704){
-            for k in stride(from: 96, to: 1024, by: 64) {
-                createWall(i: i, k: k)
-            }
-        }
+        
+        
         // Create shape node to use during mouse interaction
         let w = (self.size.width + self.size.height) * 0.05
         self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
