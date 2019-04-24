@@ -46,7 +46,7 @@ class GameScene: SKScene {
         }
     }
     func createWall(i: Int, k: Int) {
-        let wall = SKSpriteNode(imageNamed: "Wall-Tile.png")
+        let wall = SKSpriteNode(imageNamed: "Floor-Tile2.png")
         let size = CGSize(width: 64, height: 64)
         wall.physicsBody = SKPhysicsBody(rectangleOf: size)
         wall.physicsBody!.isDynamic = false
@@ -55,7 +55,18 @@ class GameScene: SKScene {
         total = total + 1
         addChild(wall)
     }
-    
+    func createHealth() {
+        for i in 1...6 {
+        let box = SKSpriteNode(imageNamed: "Floor-Tile2.png")
+        let size = CGSize(width: 64, height: 64)
+        wall.physicsBody = SKPhysicsBody(rectangleOf: size)
+        wall.physicsBody!.isDynamic = false
+        wall.position = CGPoint(x: i, y: k)
+        print("X:" + String(i) + " Y:" + String(k))
+        total = total + 1
+        addChild(wall)
+        }
+    }
     
     
     func touchDown(atPoint pos : CGPoint) {
