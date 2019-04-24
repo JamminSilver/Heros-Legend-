@@ -30,6 +30,7 @@ class GameScene: SKScene {
                 createWall(i: i, k: k)
             }
         }
+        createHealth()
         print(total)
         
         // Create shape node to use during mouse interaction
@@ -56,15 +57,86 @@ class GameScene: SKScene {
         addChild(wall)
     }
     func createHealth() {
+        var box: SKSpriteNode = SKSpriteNode(imageNamed: "Letter-H.png")
+        var l = 0
         for i in 1...6 {
-        let box = SKSpriteNode(imageNamed: "Floor-Tile2.png")
+            switch i {
+                
+            case 1:
+                box = SKSpriteNode(imageNamed: "Letter-H.png")
+                
+            case 2:
+                box = SKSpriteNode(imageNamed: "Letter-E.png")
+                
+            case 3:
+                box = SKSpriteNode(imageNamed: "Letter-A.png")
+                
+            case 4:
+                box = SKSpriteNode(imageNamed: "Letter-L.png")
+                
+            case 5:
+                box = SKSpriteNode(imageNamed: "Letter-T.png")
+                
+            case 6:
+                box = SKSpriteNode(imageNamed: "Letter-H.png")
+            
+            default:
+                box = SKSpriteNode(imageNamed: "Letter-A.png")
+                
+            }
+            switch i {
+                
+            case 1:
+                l = 32
+                
+            case 2:
+                l = 96
+                
+            case 3:
+                l = 160
+                
+            case 4:
+                l = 224
+                
+            case 5:
+                l = 288
+                
+            case 6:
+                l = 352
+                
+            default:
+                l = 0
+                
+            }
         let size = CGSize(width: 64, height: 64)
-        wall.physicsBody = SKPhysicsBody(rectangleOf: size)
-        wall.physicsBody!.isDynamic = false
-        wall.position = CGPoint(x: i, y: k)
-        print("X:" + String(i) + " Y:" + String(k))
-        total = total + 1
-        addChild(wall)
+        box.physicsBody = SKPhysicsBody(rectangleOf: size)
+        box.physicsBody!.isDynamic = false
+        box.position = CGPoint(x: l, y: 636)
+        addChild(box)
+        }
+        for i in 1...3 {
+            var l = 0
+            let heart = SKSpriteNode(imageNamed: "Heart.png")
+            let size = CGSize(width: 64, height: 64)
+            switch i {
+                
+            case 1:
+                l = 480
+                
+            case 2:
+                l = 544
+                
+            case 3:
+                l = 608
+                
+            default:
+                l = 0
+                
+            }
+            heart.physicsBody = SKPhysicsBody(rectangleOf: size)
+            heart.physicsBody!.isDynamic = false
+            heart.position = CGPoint(x: l, y: 636)
+            addChild(heart)
         }
     }
     
