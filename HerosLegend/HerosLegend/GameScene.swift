@@ -13,7 +13,7 @@ var total = 0
 
 class GameScene: SKScene {
     
-    var health = 6
+    var health = 3
     var entities = [GKEntity]()
     var graphs = [String : GKGraph]()
     
