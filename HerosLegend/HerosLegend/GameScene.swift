@@ -16,7 +16,7 @@ class GameScene: SKScene {
     var health = 3
     var entities = [GKEntity]()
     var graphs = [String : GKGraph]()
-    var mainCharacter: SKSpriteNode = SKSpriteNode(imageNamed: "maineChar.png")
+    var mainCharacter: SKSpriteNode = SKSpriteNode(imageNamed: "maincharacter.png")
     var mainCharacterX: Int = 480
     var mainCharacterY: Int = 192
     
@@ -179,7 +179,18 @@ class GameScene: SKScene {
         }
         
         for t in touches { self.touchDown(atPoint: t.location(in: self)) }
-        mainCharacter.run(SKAction.moveTo(x: CGFloat(mainCharacterX + 64), duration: 0.5))
+        if let touch = touches.first {
+            let position = touch.location(in: self)
+            if position.x <= 341.333333333 && !(mainCharacterX <= 64) {
+                mainCharacterX = mainCharacterX - 64
+                mainCharacter.run(SKAction.moveTo(x: CGFloat(mainCharacterX), duration: 0.5))
+            } else if position.x > 341.333333333 && position.x <= 682.6666666666 {
+                
+            } else if position.x > 682.666666666666 && !(mainCharacterX >= 960) {
+                mainCharacterX = mainCharacterX + 64
+                mainCharacter.run(SKAction.moveTo(x: CGFloat(mainCharacterX), duration: 0.5))
+            }
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
