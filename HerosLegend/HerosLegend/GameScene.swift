@@ -16,6 +16,9 @@ class GameScene: SKScene {
     var health = 3
     var entities = [GKEntity]()
     var graphs = [String : GKGraph]()
+    var mainCharacter: SKSpriteNode = SKSpriteNode(imageNamed: "maineChar.png")
+    var mainCharacterX: Int = 480
+    var mainCharacterY: Int = 192
     
     private var lastUpdateTime : TimeInterval = 0
     private var label : SKLabelNode?
@@ -31,7 +34,12 @@ class GameScene: SKScene {
             }
         }
         createHealth()
-        print(total)
+        let size = CGSize(width: 64, height: 64)
+        mainCharacter.name = "mainCharacter"
+        mainCharacter.physicsBody = SKPhysicsBody(rectangleOf: size)
+        mainCharacter.physicsBody!.isDynamic = false
+        mainCharacter.position = CGPoint(x: mainCharacterX, y: mainCharacterY)
+        addChild(mainCharacter)
         
         // Create shape node to use during mouse interaction
         let w = (self.size.width + self.size.height) * 0.05
@@ -171,6 +179,7 @@ class GameScene: SKScene {
         }
         
         for t in touches { self.touchDown(atPoint: t.location(in: self)) }
+        mainCharacter.run(SKAction.moveTo(x: CGFloat(mainCharacterX + 64), duration: 0.5))
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
