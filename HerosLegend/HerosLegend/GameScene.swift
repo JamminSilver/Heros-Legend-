@@ -17,8 +17,12 @@ class GameScene: SKScene {
     var entities = [GKEntity]()
     var graphs = [String : GKGraph]()
     var mainCharacter: SKSpriteNode = SKSpriteNode(imageNamed: "maincharacter.png")
+    var arrow: SKSpriteNode = SKSpriteNode(imageNamed: "Arrow.png")
+    var monster: SKSpriteNode = SKSpriteNode(imageNamed: "monster.png")
     var mainCharacterX: Int = 480
     var mainCharacterY: Int = 192
+    var arrowY: Int = 192
+    var arrowAlive = false
     
     private var lastUpdateTime : TimeInterval = 0
     private var label : SKLabelNode?
@@ -54,6 +58,15 @@ class GameScene: SKScene {
                                               SKAction.removeFromParent()]))
         }
     }
+    
+    func spawnMonster() {
+        let size = CGSize(width: 64, height: 64)
+        monster.physicsBody = SKPhysicsBody(rectangleOf: size)
+        monster.physicsBody!.isDynamic = false
+        monster.position = CGPoint(x: 32 + 64 * Int.random(in: 0...15), y: 576)
+        addChild(monster)
+    }
+    
     func createWall(i: Int, k: Int) {
         let wall = SKSpriteNode(imageNamed: "Floor-Tile2.png")
         let size = CGSize(width: 64, height: 64)
@@ -148,6 +161,15 @@ class GameScene: SKScene {
         }
     }
     
+    func createArrow() {
+        let size = CGSize(width: 64, height: 64)
+        arrow.name = "arrow"
+        arrow.physicsBody = SKPhysicsBody(rectangleOf: size)
+        arrow.physicsBody!.isDynamic = false
+        arrow.position = CGPoint(x: mainCharacterX, y: mainCharacterY + 64)
+        arrowAlive = true
+        addChild(arrow)
+    }
     
     func touchDown(atPoint pos : CGPoint) {
         if let n = self.spinnyNode?.copy() as! SKShapeNode? {
@@ -185,7 +207,18 @@ class GameScene: SKScene {
                 mainCharacterX = mainCharacterX - 64
                 mainCharacter.run(SKAction.moveTo(x: CGFloat(mainCharacterX), duration: 0.5))
             } else if position.x > 341.333333333 && position.x <= 682.6666666666 {
-                
+                if arrowAlive == false {
+                    createArrow()
+                        repeat {
+                            arrowY = arrowY + 64
+                            arrow.run(SKAction.moveTo(y: CGFloat(arrowY), duration: 1/6))
+                        } while (arrowY < 576)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
+                            self.arrow.removeFromParent()
+                            self.arrowY = self.mainCharacterY + 64
+                            self.arrowAlive = false
+                        })
+                }
             } else if position.x > 682.666666666666 && !(mainCharacterX >= 960) {
                 mainCharacterX = mainCharacterX + 64
                 mainCharacter.run(SKAction.moveTo(x: CGFloat(mainCharacterX), duration: 0.5))
