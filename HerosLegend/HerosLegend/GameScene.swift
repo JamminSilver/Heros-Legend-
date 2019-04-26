@@ -22,7 +22,11 @@ class GameScene: SKScene {
     var mainCharacterX: Int = 480
     var mainCharacterY: Int = 192
     var arrowY: Int = 192
+    var monsterY: Int = 576
     var arrowAlive = false
+    var timer: Timer!
+    var moveTimer: Timer!
+    var totalMonsters = 0
     
     private var lastUpdateTime : TimeInterval = 0
     private var label : SKLabelNode?
@@ -45,6 +49,10 @@ class GameScene: SKScene {
         mainCharacter.position = CGPoint(x: mainCharacterX, y: mainCharacterY)
         addChild(mainCharacter)
         
+        timer = Timer.scheduledTimer(timeInterval: 8, target: self, selector: #selector(spawnMonster), userInfo: nil, repeats: true)
+        moveTimer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(moveMonster), userInfo: nil, repeats: true)
+        
+        
         // Create shape node to use during mouse interaction
         let w = (self.size.width + self.size.height) * 0.05
         self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
@@ -59,12 +67,18 @@ class GameScene: SKScene {
         }
     }
     
-    func spawnMonster() {
+    @objc func spawnMonster() {
         let size = CGSize(width: 64, height: 64)
+        monster.name = "monster" + String(totalMonsters)
         monster.physicsBody = SKPhysicsBody(rectangleOf: size)
         monster.physicsBody!.isDynamic = false
         monster.position = CGPoint(x: 32 + 64 * Int.random(in: 0...15), y: 576)
         addChild(monster)
+        totalMonsters = totalMonsters + 1
+    }
+    
+    func createMainCharacter() {
+        
     }
     
     func createWall(i: Int, k: Int) {
@@ -77,6 +91,7 @@ class GameScene: SKScene {
         total = total + 1
         addChild(wall)
     }
+    
     func createHealth() {
         var box: SKSpriteNode = SKSpriteNode(imageNamed: "Letter-H.png")
         var l = 0
@@ -154,6 +169,7 @@ class GameScene: SKScene {
                 l = 0
                 
             }
+            heart.name = "heart" + String(i)
             heart.physicsBody = SKPhysicsBody(rectangleOf: size)
             heart.physicsBody!.isDynamic = false
             heart.position = CGPoint(x: l, y: 636)
@@ -228,6 +244,23 @@ class GameScene: SKScene {
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
+    }
+    
+    @objc func moveMonster() {
+        if monsterY >= 64 {
+        monsterY = monsterY - 64
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
+                self.monster.run(SKAction.moveTo(y: CGFloat(self.monsterY), duration: 1))
+            })
+        } else {
+            if health == 3 {
+                
+            } else if health == 2 {
+               
+            }
+            health = health - 1
+            monster.removeFromParent()
+        }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
