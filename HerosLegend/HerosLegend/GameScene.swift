@@ -86,28 +86,28 @@ class GameScene: SKScene {
         monster.position = CGPoint(x: 32 + 64 * Int.random(in: 0...15), y: 576)
         addChild(monster)
 //        let move = SKAction.moveTo(y:  CGFloat(self.monsterY), duration: 1)
-        let move = SKAction.moveBy(x: 0, y: -64, duration: 2)
+        let move = SKAction.moveBy(x: 0, y: -64, duration: 1)
         let moveForever = SKAction.repeatForever(move)
         monster.run(moveForever)
     }
     
-//    func moveMonster() {
-//        if monsterY >= 64 {
-//            monsterY = monsterY - 64
-//        } else {
-//            if health == 3 {
-//                health = health - 1
-//                monster.removeFromParent()
-//                monsterY = 576
-//            } else if health == 2 {
-//                health = health - 1
-//                monster.removeFromParent()
-//                monsterY = 576
-//            } else {
-//
-//            }
-//        }
-//    }
+    func moveMonster() {
+        if monsterY >= 64 {
+            monsterY = monsterY - 64
+        } else {
+            if health == 3 {
+                health = health - 1
+                monster.removeFromParent()
+                monsterY = 576
+            } else if health == 2 {
+                health = health - 1
+                monster.removeFromParent()
+                monsterY = 576
+            } else {
+                
+            }
+        }
+    }
     
     func createWall(i: Int, k: Int) {
         let wall = SKSpriteNode(imageNamed: "Floor-Tile2.png")
