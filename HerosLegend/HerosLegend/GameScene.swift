@@ -27,6 +27,8 @@ class GameScene: SKScene {
     var timer: Timer!
     var moveTimer: Timer!
     var totalMonsters = 0
+    var scoreLabel: SKLabelNode!
+    var startLabel: SKLabelNode!
     
     private var lastUpdateTime : TimeInterval = 0
     private var label : SKLabelNode?
@@ -36,6 +38,33 @@ class GameScene: SKScene {
 
         self.lastUpdateTime = 0
         
+        startNewGame()
+        
+        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.text = "Score: 0"
+        scoreLabel.horizontalAlignmentMode = .right
+        scoreLabel.position = CGPoint(x: 736, y:700)
+        addChild(scoreLabel)
+        
+        startLabel = SKLabelNode(fontNamed: "Chalkduster")
+        startLabel.text = "Start New Game"
+        startLabel.position = CGPoint(x: 80, y:700)
+        addChild(startLabel)
+        // Create shape node to use during mouse interaction
+        let w = (self.size.width + self.size.height) * 0.05
+        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
+        
+        if let spinnyNode = self.spinnyNode {
+            spinnyNode.lineWidth = 2.5
+            
+            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
+            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
+                                              SKAction.fadeOut(withDuration: 0.5),
+                                              SKAction.removeFromParent()]))
+        }
+    }
+    
+    func startNewGame() {
         for i in stride(from: 32, to: 1024, by: 64){
             for k in stride(from: 0, to: 620, by: 64) {
                 createWall(i: i, k: k)
@@ -51,23 +80,10 @@ class GameScene: SKScene {
         
         timer = Timer.scheduledTimer(timeInterval: 8, target: self, selector: #selector(spawnMonster), userInfo: nil, repeats: true)
         moveTimer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(moveMonster), userInfo: nil, repeats: true)
-        
-        
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
-        
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
-            
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
-        }
     }
     
     @objc func spawnMonster() {
+        let monster: SKSpriteNode = SKSpriteNode(imageNamed: "monster.png")
         let size = CGSize(width: 64, height: 64)
         monster.name = "monster" + String(totalMonsters)
         monster.physicsBody = SKPhysicsBody(rectangleOf: size)
@@ -229,7 +245,7 @@ class GameScene: SKScene {
                             arrowY = arrowY + 64
                             arrow.run(SKAction.moveTo(y: CGFloat(arrowY), duration: 1/6))
                         } while (arrowY < 576)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
                             self.arrow.removeFromParent()
                             self.arrowY = self.mainCharacterY + 64
                             self.arrowAlive = false
@@ -249,17 +265,19 @@ class GameScene: SKScene {
     @objc func moveMonster() {
         if monsterY >= 64 {
         monsterY = monsterY - 64
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
                 self.monster.run(SKAction.moveTo(y: CGFloat(self.monsterY), duration: 1))
             })
         } else {
             if health == 3 {
-                
+                health = health - 1
+                monster.removeFromParent()
             } else if health == 2 {
-               
+                health = health - 1
+                monster.removeFromParent()
+            } else {
+                
             }
-            health = health - 1
-            monster.removeFromParent()
         }
     }
     
