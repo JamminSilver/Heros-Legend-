@@ -40,16 +40,11 @@ class GameScene: SKScene {
         
         startNewGame()
         
-        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
-        scoreLabel.text = "Score: 0"
-        scoreLabel.horizontalAlignmentMode = .right
-        scoreLabel.position = CGPoint(x: 736, y:700)
-        addChild(scoreLabel)
-        
         startLabel = SKLabelNode(fontNamed: "Chalkduster")
         startLabel.text = "Start New Game"
         startLabel.position = CGPoint(x: 80, y:700)
         addChild(startLabel)
+        
         // Create shape node to use during mouse interaction
         let w = (self.size.width + self.size.height) * 0.05
         self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
@@ -79,7 +74,7 @@ class GameScene: SKScene {
         addChild(mainCharacter)
         
         timer = Timer.scheduledTimer(timeInterval: 8, target: self, selector: #selector(spawnMonster), userInfo: nil, repeats: true)
-        moveTimer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(moveMonster), userInfo: nil, repeats: true)
+        moveTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(checkMonsterY), userInfo: nil, repeats: true)
     }
     
     @objc func spawnMonster() {
@@ -90,12 +85,29 @@ class GameScene: SKScene {
         monster.physicsBody!.isDynamic = false
         monster.position = CGPoint(x: 32 + 64 * Int.random(in: 0...15), y: 576)
         addChild(monster)
-        totalMonsters = totalMonsters + 1
+//        let move = SKAction.moveTo(y:  CGFloat(self.monsterY), duration: 1)
+        let move = SKAction.moveBy(x: 0, y: -64, duration: 2)
+        let moveForever = SKAction.repeatForever(move)
+        monster.run(moveForever)
     }
     
-    func createMainCharacter() {
-        
-    }
+//    func moveMonster() {
+//        if monsterY >= 64 {
+//            monsterY = monsterY - 64
+//        } else {
+//            if health == 3 {
+//                health = health - 1
+//                monster.removeFromParent()
+//                monsterY = 576
+//            } else if health == 2 {
+//                health = health - 1
+//                monster.removeFromParent()
+//                monsterY = 576
+//            } else {
+//
+//            }
+//        }
+//    }
     
     func createWall(i: Int, k: Int) {
         let wall = SKSpriteNode(imageNamed: "Floor-Tile2.png")
@@ -192,6 +204,20 @@ class GameScene: SKScene {
             addChild(heart)
         }
     }
+    @objc func checkMonsterY() {
+        if monsterY < 64 {
+            if health == 3 {
+                health = health - 1
+                monster.removeFromParent()
+            } else if health == 2 {
+                health = health - 1
+                monster.removeFromParent()
+            } else {
+                exit(0)
+            }
+        }
+    }
+    
     
     func createArrow() {
         let size = CGSize(width: 64, height: 64)
@@ -262,24 +288,6 @@ class GameScene: SKScene {
         for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
     }
     
-    @objc func moveMonster() {
-        if monsterY >= 64 {
-        monsterY = monsterY - 64
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
-                self.monster.run(SKAction.moveTo(y: CGFloat(self.monsterY), duration: 1))
-            })
-        } else {
-            if health == 3 {
-                health = health - 1
-                monster.removeFromParent()
-            } else if health == 2 {
-                health = health - 1
-                monster.removeFromParent()
-            } else {
-                
-            }
-        }
-    }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
