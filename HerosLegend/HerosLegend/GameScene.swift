@@ -11,7 +11,7 @@ import GameplayKit
 
 var total = 0
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var health = 3
     var score = 0
@@ -39,28 +39,43 @@ class GameScene: SKScene {
     private var spinnyNode : SKShapeNode?
     
     override func sceneDidLoad() {
-
+        
+        
+//        self.lastUpdateTime = 0
+//
+//        startNewGame()
+//
+//        startLabel = SKLabelNode(fontNamed: "Chalkduster")
+//        startLabel.text = "Start New Game"
+//        startLabel.position = CGPoint(x: 762, y:0)
+//        addChild(startLabel)
+//
+//        // Create shape node to use during mouse interaction
+//        let w = (self.size.width + self.size.height) * 0.05
+//        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
+//
+//        if let spinnyNode = self.spinnyNode {
+//            spinnyNode.lineWidth = 2.5
+//
+//            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
+//            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
+//                                              SKAction.fadeOut(withDuration: 0.5),
+//                                              SKAction.removeFromParent()]))
+//        }
+    }
+    
+    override func didMove(to view: SKView) {
+        physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
+        self.physicsWorld.contactDelegate = self
+        
         self.lastUpdateTime = 0
         
         startNewGame()
         
         startLabel = SKLabelNode(fontNamed: "Chalkduster")
         startLabel.text = "Start New Game"
-        startLabel.position = CGPoint(x: 80, y:700)
+        startLabel.position = CGPoint(x: 762, y:0)
         addChild(startLabel)
-        
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
-        
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
-            
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
-        }
     }
     
     func startNewGame() {
@@ -72,11 +87,18 @@ class GameScene: SKScene {
         createHealth()
         let size = CGSize(width: 64, height: 64)
         mainCharacter.name = "mainCharacter"
-        mainCharacter.physicsBody = SKPhysicsBody(rectangleOf: size)
+        mainCharacter.physicsBody = SKPhysicsBody(rectangleOf: mainCharacter.size) //size)
         mainCharacter.physicsBody!.contactTestBitMask = mainCharacter.physicsBody!.collisionBitMask
         mainCharacter.physicsBody!.isDynamic = false
         mainCharacter.position = CGPoint(x: mainCharacterX, y: mainCharacterY)
         addChild(mainCharacter)
+        
+//        let box = SKSpriteNode(imageNamed: "monster.png")
+//        box.physicsBody = SKPhysicsBody(rectangleOf: size)
+//        box.physicsBody!.isDynamic = false
+//        box.position = CGPoint(x:416 , y:192)
+//        box.name = "box"
+//        addChild(box)
         
         timer = Timer.scheduledTimer(timeInterval: 8, target: self, selector: #selector(spawnMonster), userInfo: nil, repeats: true)
         moveTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(checkMonsterY), userInfo: nil, repeats: true)
@@ -86,8 +108,8 @@ class GameScene: SKScene {
         let monster: SKSpriteNode = SKSpriteNode(imageNamed: "monster.png")
         let size = CGSize(width: 64, height: 64)
         monster.name = "monster"
-        monster.physicsBody = SKPhysicsBody(rectangleOf: size)
-        monster.physicsBody!.contactTestBitMask = monster.physicsBody!.collisionBitMask
+        monster.physicsBody = SKPhysicsBody(rectangleOf: monster.size)//size)
+        //monster.physicsBody!.contactTestBitMask = monster.physicsBody!.collisionBitMask
         monster.physicsBody!.isDynamic = false
         monster.position = CGPoint(x: 32 + 64 * Int.random(in: 0...15), y: 576)
         addChild(monster)
@@ -243,8 +265,8 @@ class GameScene: SKScene {
     func createArrow() {
         let size = CGSize(width: 64, height: 64)
         arrow.name = "arrow"
-        arrow.physicsBody = SKPhysicsBody(rectangleOf: size)
-        arrow.physicsBody!.contactTestBitMask = arrow.physicsBody!.collisionBitMask
+        arrow.physicsBody = SKPhysicsBody(rectangleOf: arrow.size)//size)
+        //arrow.physicsBody!.contactTestBitMask = arrow.physicsBody!.collisionBitMask
         arrow.physicsBody!.isDynamic = false
         arrow.position = CGPoint(x: mainCharacterX, y: mainCharacterY + 64)
         arrowAlive = true
@@ -269,22 +291,24 @@ class GameScene: SKScene {
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
-        if contact.bodyA.node?.name == "arrow" {
-            collisionBetween(arrow: contact.bodyA.node!, object: contact.bodyB.node!)
-        } else if contact.bodyB.node?.name == "arrow" {
-            collisionBetween(arrow: contact.bodyB.node!, object: contact.bodyA.node!)
-        } else if contact.bodyA.node?.name != "arrow" && contact.bodyB.node?.name != "name" && (contact.bodyB.node?.name == "mainCharacter" || contact.bodyA.node?.name == "mainCharacter") {
+        print("in didBegin")
+        if contact.bodyA.node?.name == "monster" {
+            collisionBetween(monster: contact.bodyA.node!, object: contact.bodyB.node!)
+        } else if contact.bodyB.node?.name == "monster" {
+            collisionBetween(monster: contact.bodyB.node!, object: contact.bodyA.node!)
+        } //else if contact.bodyA.node?.name != "arrow" && contact.bodyB.node?.name != "name" && (contact.bodyB.node?.name == "mainCharacter" || contact.bodyA.node?.name == "mainCharacter") {
             
-        }
+        //}
     }
     
-    func collisionBetween(arrow: SKNode, object: SKNode) {
-        if object.name == "monster" && arrow.name == "arrow" {
+    func collisionBetween(monster: SKNode, object: SKNode) {
+        print("in Collision")
+        if object.name == "arrow" && monster.name == "monster" {
             score += 100
             monster.removeFromParent()
             arrow.removeFromParent()
             arrowAlive = false
-            print("Runs collision")
+            print("Runs if collision")
         } else if (object.name == "monster" && arrow.name == "mainCharacter") || (arrow.name == "monster" && object.name == "mainCharacter") {
             monster.removeFromParent()
              print("Runs collision")
