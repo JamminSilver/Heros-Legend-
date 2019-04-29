@@ -86,7 +86,7 @@ class GameScene: SKScene {
         monster.position = CGPoint(x: 32 + 64 * Int.random(in: 0...15), y: 576)
         addChild(monster)
 //        let move = SKAction.moveTo(y:  CGFloat(self.monsterY), duration: 1)
-        let move = SKAction.moveBy(x: 0, y: -64, duration: 1)
+        let move = SKAction.moveBy(x: 0, y: -64, duration: 2)
         let moveForever = SKAction.repeatForever(move)
         monster.run(moveForever)
     }
@@ -223,6 +223,7 @@ class GameScene: SKScene {
         let size = CGSize(width: 64, height: 64)
         arrow.name = "arrow"
         arrow.physicsBody = SKPhysicsBody(rectangleOf: size)
+        arrow.physicsBody!.contactTestBitMask = arrow.physicsBody!.collisionBitMask
         arrow.physicsBody!.isDynamic = false
         arrow.position = CGPoint(x: mainCharacterX, y: mainCharacterY + 64)
         arrowAlive = true
