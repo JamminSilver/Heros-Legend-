@@ -14,6 +14,7 @@ var total = 0
 class GameScene: SKScene {
     
     var health = 3
+    var score = 0
     var entities = [GKEntity]()
     var graphs = [String : GKGraph]()
     var mainCharacter: SKSpriteNode = SKSpriteNode(imageNamed: "maincharacter.png")
@@ -29,6 +30,9 @@ class GameScene: SKScene {
     var totalMonsters = 0
     var scoreLabel: SKLabelNode!
     var startLabel: SKLabelNode!
+    var heart1: SKSpriteNode!
+    var heart2: SKSpriteNode!
+    var heart3: SKSpriteNode!
     
     private var lastUpdateTime : TimeInterval = 0
     private var label : SKLabelNode?
@@ -69,6 +73,7 @@ class GameScene: SKScene {
         let size = CGSize(width: 64, height: 64)
         mainCharacter.name = "mainCharacter"
         mainCharacter.physicsBody = SKPhysicsBody(rectangleOf: size)
+        mainCharacter.physicsBody!.contactTestBitMask = mainCharacter.physicsBody!.collisionBitMask
         mainCharacter.physicsBody!.isDynamic = false
         mainCharacter.position = CGPoint(x: mainCharacterX, y: mainCharacterY)
         addChild(mainCharacter)
@@ -80,8 +85,9 @@ class GameScene: SKScene {
     @objc func spawnMonster() {
         let monster: SKSpriteNode = SKSpriteNode(imageNamed: "monster.png")
         let size = CGSize(width: 64, height: 64)
-        monster.name = "monster" + String(totalMonsters)
+        monster.name = "monster"
         monster.physicsBody = SKPhysicsBody(rectangleOf: size)
+        monster.physicsBody!.contactTestBitMask = monster.physicsBody!.collisionBitMask
         monster.physicsBody!.isDynamic = false
         monster.position = CGPoint(x: 32 + 64 * Int.random(in: 0...15), y: 576)
         addChild(monster)
@@ -115,7 +121,6 @@ class GameScene: SKScene {
         wall.physicsBody = SKPhysicsBody(rectangleOf: size)
         wall.physicsBody!.isDynamic = false
         wall.position = CGPoint(x: i, y: k)
-        print("X:" + String(i) + " Y:" + String(k))
         total = total + 1
         addChild(wall)
     }
@@ -180,7 +185,6 @@ class GameScene: SKScene {
         }
         for i in 1...3 {
             var l = 0
-            let heart = SKSpriteNode(imageNamed: "Heart.png")
             let size = CGSize(width: 64, height: 64)
             switch i {
                 
@@ -197,11 +201,28 @@ class GameScene: SKScene {
                 l = 0
                 
             }
-            heart.name = "heart" + String(i)
-            heart.physicsBody = SKPhysicsBody(rectangleOf: size)
-            heart.physicsBody!.isDynamic = false
-            heart.position = CGPoint(x: l, y: 636)
-            addChild(heart)
+            if i == 1 {
+                let heart1 = SKSpriteNode(imageNamed: "Heart.png")
+                heart1.name = "heart" + String(i)
+                heart1.physicsBody = SKPhysicsBody(rectangleOf: size)
+                heart1.physicsBody!.isDynamic = false
+                heart1.position = CGPoint(x: l, y: 636)
+                addChild(heart1)
+            } else if i == 2 {
+                let heart2 = SKSpriteNode(imageNamed: "Heart.png")
+                heart2.name = "heart" + String(i)
+                heart2.physicsBody = SKPhysicsBody(rectangleOf: size)
+                heart2.physicsBody!.isDynamic = false
+                heart2.position = CGPoint(x: l, y: 636)
+                addChild(heart2)
+            } else {
+                let heart3 = SKSpriteNode(imageNamed: "Heart.png")
+                heart3.name = "heart" + String(i)
+                heart3.physicsBody = SKPhysicsBody(rectangleOf: size)
+                heart3.physicsBody!.isDynamic = false
+                heart3.position = CGPoint(x: l, y: 636)
+                addChild(heart3)
+            }
         }
     }
     @objc func checkMonsterY() {
@@ -228,6 +249,7 @@ class GameScene: SKScene {
         arrow.position = CGPoint(x: mainCharacterX, y: mainCharacterY + 64)
         arrowAlive = true
         addChild(arrow)
+        print("pew!")
     }
     
     func touchDown(atPoint pos : CGPoint) {
@@ -244,6 +266,30 @@ class GameScene: SKScene {
             n.strokeColor = SKColor.blue
             self.addChild(n)
         }
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        if contact.bodyA.node?.name == "arrow" {
+            collisionBetween(arrow: contact.bodyA.node!, object: contact.bodyB.node!)
+        } else if contact.bodyB.node?.name == "arrow" {
+            collisionBetween(arrow: contact.bodyB.node!, object: contact.bodyA.node!)
+        } else if contact.bodyA.node?.name != "arrow" && contact.bodyB.node?.name != "name" && (contact.bodyB.node?.name == "mainCharacter" || contact.bodyA.node?.name == "mainCharacter") {
+            
+        }
+    }
+    
+    func collisionBetween(arrow: SKNode, object: SKNode) {
+        if object.name == "monster" && arrow.name == "arrow" {
+            score += 100
+            monster.removeFromParent()
+            arrow.removeFromParent()
+            arrowAlive = false
+            print("Runs collision")
+        } else if (object.name == "monster" && arrow.name == "mainCharacter") || (arrow.name == "monster" && object.name == "mainCharacter") {
+            monster.removeFromParent()
+             print("Runs collision")
+        }
+        
     }
     
     func touchUp(atPoint pos : CGPoint) {
