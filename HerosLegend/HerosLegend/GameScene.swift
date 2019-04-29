@@ -18,7 +18,7 @@ class GameScene: SKScene {
     var graphs = [String : GKGraph]()
     var mainCharacter: SKSpriteNode = SKSpriteNode(imageNamed: "maincharacter.png")
     var arrow: SKSpriteNode = SKSpriteNode(imageNamed: "Arrow.png")
-    var monster: SKSpriteNode = SKSpriteNode(imageNamed: "monster.png")
+    var monster: SKSpriteNode = SKSpriteNode(imageNamed: "enemy.png")
     var mainCharacterX: Int = 480
     var mainCharacterY: Int = 192
     var arrowY: Int = 192
