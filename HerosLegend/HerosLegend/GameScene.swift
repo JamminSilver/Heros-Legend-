@@ -18,8 +18,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var entities = [GKEntity]()
     var graphs = [String : GKGraph]()
     var mainCharacter: SKSpriteNode = SKSpriteNode(imageNamed: "maincharacter.png")
-    var arrow: SKSpriteNode = SKSpriteNode(imageNamed: "Arrow.png")
-    var monster: SKSpriteNode = SKSpriteNode(imageNamed: "monster.png")
+    //var arrow: SKSpriteNode = SKSpriteNode(imageNamed: "Arrow.png")
+    var monster: SKSpriteNode!
     var mainCharacterX: Int = 480
     var mainCharacterY: Int = 192
     var arrowY: Int = 192
@@ -100,17 +100,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        box.name = "box"
 //        addChild(box)
         
-        timer = Timer.scheduledTimer(timeInterval: 8, target: self, selector: #selector(spawnMonster), userInfo: nil, repeats: true)
-        moveTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(checkMonsterY), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(spawnMonster), userInfo: nil, repeats: true)
+//        moveTimer = Timer.scheduledTimer(timeInterval: 20, target: self, selector: #selector(checkMonsterY), userInfo: nil, repeats: true)
     }
     
     @objc func spawnMonster() {
-        let monster: SKSpriteNode = SKSpriteNode(imageNamed: "monster.png")
+        
+        monster = SKSpriteNode(imageNamed: "monster.png")
         let size = CGSize(width: 64, height: 64)
         monster.name = "monster"
         monster.physicsBody = SKPhysicsBody(rectangleOf: monster.size)//size)
-        //monster.physicsBody!.contactTestBitMask = monster.physicsBody!.collisionBitMask
-        monster.physicsBody!.isDynamic = false
+        monster.physicsBody!.contactTestBitMask = monster.physicsBody!.collisionBitMask
+        monster.physicsBody!.isDynamic = true
         monster.position = CGPoint(x: 32 + 64 * Int.random(in: 0...15), y: 576)
         addChild(monster)
 //        let move = SKAction.moveTo(y:  CGFloat(self.monsterY), duration: 1)
@@ -119,29 +120,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         monster.run(moveForever)
     }
     
-    func moveMonster() {
-        if monsterY >= 64 {
-            monsterY = monsterY - 64
-        } else {
-            if health == 3 {
-                health = health - 1
-                monster.removeFromParent()
-                monsterY = 576
-            } else if health == 2 {
-                health = health - 1
-                monster.removeFromParent()
-                monsterY = 576
-            } else {
-                
-            }
-        }
-    }
-    
     func createWall(i: Int, k: Int) {
         let wall = SKSpriteNode(imageNamed: "Floor-Tile2.png")
         let size = CGSize(width: 64, height: 64)
-        wall.physicsBody = SKPhysicsBody(rectangleOf: size)
-        wall.physicsBody!.isDynamic = false
+//        wall.physicsBody = SKPhysicsBody(rectangleOf: size)
+//        wall.physicsBody!.isDynamic = false
         wall.position = CGPoint(x: i, y: k)
         total = total + 1
         addChild(wall)
@@ -247,32 +230,40 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-    @objc func checkMonsterY() {
-        if monsterY < 64 {
-            if health == 3 {
-                health = health - 1
-                monster.removeFromParent()
-            } else if health == 2 {
-                health = health - 1
-                monster.removeFromParent()
-            } else {
-                exit(0)
-            }
-        }
-    }
+//    @objc func checkMonsterY() {
+//        print("Check")
+//            if monster.position.y <= 64 {
+//                if health == 3 {
+//                    health = health - 1
+//                    heart3.removeFromParent()
+//                    monster.removeFromParent()
+//                    monsterY = 576
+//                    print("runs")
+//                } else if health == 2 {
+//                    health = health - 1
+//                    heart2.removeFromParent()
+//                    monster.removeFromParent()
+//                    monsterY = 576
+//                } else {
+//                    heart1.removeFromParent()
+//            }
+//        } else {
+//            print("UNCLE ANDROSS!!!")
+//            }
+//    }
     
     
-    func createArrow() {
-        let size = CGSize(width: 64, height: 64)
-        arrow.name = "arrow"
-        arrow.physicsBody = SKPhysicsBody(rectangleOf: arrow.size)//size)
-        //arrow.physicsBody!.contactTestBitMask = arrow.physicsBody!.collisionBitMask
-        arrow.physicsBody!.isDynamic = false
-        arrow.position = CGPoint(x: mainCharacterX, y: mainCharacterY + 64)
-        arrowAlive = true
-        addChild(arrow)
-        print("pew!")
-    }
+//    func createArrow() {
+//        let size = CGSize(width: 64, height: 64)
+//        arrow.name = "arrow"
+//        arrow.physicsBody = SKPhysicsBody(rectangleOf: arrow.size)//size)
+//        arrow.physicsBody!.contactTestBitMask = arrow.physicsBody!.collisionBitMask
+//        arrow.physicsBody!.isDynamic = false
+//        arrow.position = CGPoint(x: mainCharacterX, y: mainCharacterY + 64)
+//        arrowAlive = true
+//        addChild(arrow)
+//        print("pew!")
+//    }
     
     func touchDown(atPoint pos : CGPoint) {
         if let n = self.spinnyNode?.copy() as! SKShapeNode? {
@@ -306,10 +297,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if object.name == "arrow" && monster.name == "monster" {
             score += 100
             monster.removeFromParent()
-            arrow.removeFromParent()
-            arrowAlive = false
+            object.removeFromParent()
+//            arrowAlive = false
             print("Runs if collision")
-        } else if (object.name == "monster" && arrow.name == "mainCharacter") || (arrow.name == "monster" && object.name == "mainCharacter") {
+        } else if (monster.name == "monster" && object.name == "mainCharacter") || (monster.name == "monster" && object.name == "mainCharacter") {
             monster.removeFromParent()
              print("Runs collision")
         }
@@ -337,13 +328,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 mainCharacter.run(SKAction.moveTo(x: CGFloat(mainCharacterX), duration: 0.5))
             } else if position.x > 341.333333333 && position.x <= 682.6666666666 {
                 if arrowAlive == false {
-                    createArrow()
+                    let arrow = SKSpriteNode(imageNamed: "Arrow.png")
+                    let size = CGSize(width: 64, height: 64)
+                    arrow.name = "arrow"
+                    arrow.physicsBody = SKPhysicsBody(rectangleOf: arrow.size)//size)
+                    arrow.physicsBody!.contactTestBitMask = arrow.physicsBody!.collisionBitMask
+                    arrow.physicsBody!.isDynamic = false
+                    arrow.position = CGPoint(x: mainCharacterX, y: mainCharacterY + 64)
+                    arrowAlive = true
+                    addChild(arrow)
+                    print("pew!")
                         repeat {
                             arrowY = arrowY + 64
                             arrow.run(SKAction.moveTo(y: CGFloat(arrowY), duration: 1/6))
                         } while (arrowY < 576)
                         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
-                            self.arrow.removeFromParent()
+                            arrow.removeFromParent()
                             self.arrowY = self.mainCharacterY + 64
                             self.arrowAlive = false
                         })
@@ -386,5 +386,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         self.lastUpdateTime = currentTime
+
     }
 }
