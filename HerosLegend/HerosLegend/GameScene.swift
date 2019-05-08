@@ -43,7 +43,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
 //        self.lastUpdateTime = 0
 //
-//        startNewGame()
+        startNewGame()
 //
 //        startLabel = SKLabelNode(fontNamed: "Chalkduster")
 //        startLabel.text = "Start New Game"
@@ -70,7 +70,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         self.lastUpdateTime = 0
         
-        startNewGame()
+        //startNewGame()
         
         startLabel = SKLabelNode(fontNamed: "Chalkduster")
         startLabel.text = "Start New Game"
@@ -93,12 +93,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         mainCharacter.position = CGPoint(x: mainCharacterX, y: mainCharacterY)
         addChild(mainCharacter)
         
-//        let box = SKSpriteNode(imageNamed: "monster.png")
-//        box.physicsBody = SKPhysicsBody(rectangleOf: size)
-//        box.physicsBody!.isDynamic = false
-//        box.position = CGPoint(x:416 , y:192)
-//        box.name = "box"
-//        addChild(box)
+        let box = SKSpriteNode(imageNamed: "monster.png")
+        box.physicsBody = SKPhysicsBody(rectangleOf: size)
+        box.physicsBody!.isDynamic = false
+ //       box.position = CGPoint(x:416 , y:192)
+        box.name = "box"
+        addChild(box)
         
         timer = Timer.scheduledTimer(timeInterval: 8, target: self, selector: #selector(spawnMonster), userInfo: nil, repeats: true)
         moveTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(checkMonsterY), userInfo: nil, repeats: true)
@@ -263,7 +263,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func createArrow() {
-        let size = CGSize(width: 64, height: 64)
+//        let size = CGSize(width: 64, height: 64)
         arrow.name = "arrow"
         arrow.physicsBody = SKPhysicsBody(rectangleOf: arrow.size)//size)
         //arrow.physicsBody!.contactTestBitMask = arrow.physicsBody!.collisionBitMask
@@ -304,6 +304,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func collisionBetween(monster: SKNode, object: SKNode) {
         print("in Collision")
         if object.name == "arrow" && monster.name == "monster" {
+            print("Runs if collision beginning")
             score += 100
             monster.removeFromParent()
             arrow.removeFromParent()
