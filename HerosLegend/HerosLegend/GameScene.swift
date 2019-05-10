@@ -14,12 +14,17 @@ var total = 0
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var health = 3
-    var score = 0
+    var score = 0{
+        didSet {
+            scoreLabel.text = "Score: \(score)"
+        }
+    }
     var entities = [GKEntity]()
     var graphs = [String : GKGraph]()
     var mainCharacter: SKSpriteNode = SKSpriteNode(imageNamed: "maincharacter.png")
     //var arrow: SKSpriteNode = SKSpriteNode(imageNamed: "Arrow.png")
     var monster: SKSpriteNode!
+    var box: SKSpriteNode = SKSpriteNode(imageNamed: "DeathBarrier.png")
     var mainCharacterX: Int = 480
     var mainCharacterY: Int = 192
     var arrowY: Int = 192
@@ -71,11 +76,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.lastUpdateTime = 0
         
         //startNewGame()
-        
-        startLabel = SKLabelNode(fontNamed: "Chalkduster")
-        startLabel.text = "Start New Game"
-        startLabel.position = CGPoint(x: 762, y:0)
-        addChild(startLabel)
     }
     
     func startNewGame() {
@@ -93,12 +93,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         mainCharacter.position = CGPoint(x: mainCharacterX, y: mainCharacterY)
         addChild(mainCharacter)
         
-        let box = SKSpriteNode(imageNamed: "monster.png")
-        box.physicsBody = SKPhysicsBody(rectangleOf: size)
+        box.physicsBody = SKPhysicsBody(rectangleOf: box.size)
+        box.physicsBody!.contactTestBitMask = box.physicsBody!.collisionBitMask
         box.physicsBody!.isDynamic = false
- //       box.position = CGPoint(x:416 , y:192)
-        box.name = "box"
+        box.name = "death"
+        box.position = CGPoint(x:512 , y:128)
         addChild(box)
+        
+        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.text = "Score: 0"
+        scoreLabel.horizontalAlignmentMode = .right
+        scoreLabel.position = CGPoint(x: 864, y:636)
+        addChild(scoreLabel)
         
         timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(spawnMonster), userInfo: nil, repeats: true)
 //        moveTimer = Timer.scheduledTimer(timeInterval: 20, target: self, selector: #selector(checkMonsterY), userInfo: nil, repeats: true)
@@ -207,21 +213,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
             }
             if i == 1 {
-                let heart1 = SKSpriteNode(imageNamed: "Heart.png")
+                heart1 = SKSpriteNode(imageNamed: "Heart.png")
                 heart1.name = "heart" + String(i)
                 heart1.physicsBody = SKPhysicsBody(rectangleOf: size)
                 heart1.physicsBody!.isDynamic = false
                 heart1.position = CGPoint(x: l, y: 636)
                 addChild(heart1)
             } else if i == 2 {
-                let heart2 = SKSpriteNode(imageNamed: "Heart.png")
+                heart2 = SKSpriteNode(imageNamed: "Heart.png")
                 heart2.name = "heart" + String(i)
                 heart2.physicsBody = SKPhysicsBody(rectangleOf: size)
                 heart2.physicsBody!.isDynamic = false
                 heart2.position = CGPoint(x: l, y: 636)
                 addChild(heart2)
             } else {
-                let heart3 = SKSpriteNode(imageNamed: "Heart.png")
+                heart3 = SKSpriteNode(imageNamed: "Heart.png")
                 heart3.name = "heart" + String(i)
                 heart3.physicsBody = SKPhysicsBody(rectangleOf: size)
                 heart3.physicsBody!.isDynamic = false
@@ -301,9 +307,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             object.removeFromParent()
 //            arrowAlive = false
             print("Runs if collision")
-        } else if (monster.name == "monster" && object.name == "mainCharacter") || (monster.name == "monster" && object.name == "mainCharacter") {
+        } else if (monster.name == "monster" && object.name == "mainCharacter") {
             monster.removeFromParent()
-             print("Runs collision")
+            health = health - 1
+            if health == 2 {
+                heart3.removeFromParent()
+            }
+            if health == 1 {
+                heart2.removeFromParent()
+            }
+            if health == 0 {
+                heart1.removeFromParent()
+                exit(0)
+            }
+             print("Runs collision and lose life (Hits player)")
+        } else if (monster.name == "monster" && object.name == "death") {
+            monster.removeFromParent()
+            health = health - 1
+            if health == 2 {
+                heart3.removeFromParent()
+            }
+            if health == 1 {
+                heart2.removeFromParent()
+            }
+            if health == 0 {
+                heart1.removeFromParent()
+                exit(0)
+            }
+            print("Runs collision and lose life (Monster too low)")
         }
         
     }
