@@ -288,7 +288,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
-        print("in didBegin")
         if contact.bodyA.node?.name == "monster" {
             collisionBetween(monster: contact.bodyA.node!, object: contact.bodyB.node!)
         } else if contact.bodyB.node?.name == "monster" {
@@ -299,14 +298,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func collisionBetween(monster: SKNode, object: SKNode) {
-        print("in Collision")
         if object.name == "arrow" && monster.name == "monster" {
-            print("Runs if collision beginning")
             score += 100
             monster.removeFromParent()
             object.removeFromParent()
 //            arrowAlive = false
-            print("Runs if collision")
+
         } else if (monster.name == "monster" && object.name == "mainCharacter") {
             monster.removeFromParent()
             health = health - 1
@@ -320,7 +317,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 heart1.removeFromParent()
                 exit(0)
             }
-             print("Runs collision and lose life (Hits player)")
         } else if (monster.name == "monster" && object.name == "death") {
             monster.removeFromParent()
             health = health - 1
@@ -334,7 +330,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 heart1.removeFromParent()
                 exit(0)
             }
-            print("Runs collision and lose life (Monster too low)")
         }
         
     }
@@ -369,7 +364,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     arrow.position = CGPoint(x: mainCharacterX, y: mainCharacterY + 64)
                     arrowAlive = true
                     addChild(arrow)
-                    print("pew!")
                         repeat {
                             arrowY = arrowY + 64
                             arrow.run(SKAction.moveTo(y: CGFloat(arrowY), duration: 1/6))
